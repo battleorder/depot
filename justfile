@@ -15,6 +15,12 @@ get-api-tokens user='user1':
     password=user123! \
     | jq -r '{ accessToken: .access_token, refreshToken: .refresh_token }'
 
-up:
+init:
   supabase start
+
+migrate: init
+  supabase migration up
+
+up: migrate
   docker compose up -d
+  process-compose up

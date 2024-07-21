@@ -3,4 +3,5 @@ version: "0.5"
 
 processes:
   units:
+    description: Units API
     command: go run ./units/main.go
