@@ -19,5 +19,7 @@ func Init() error {
 	}
 	Client = c
 
+  initRedis()
+
 	return nil
 }
