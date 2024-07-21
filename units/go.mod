@@ -3,6 +3,7 @@ module github.com/battleorder/depot/units
 go 1.22.5
 
 require (
+	github.com/battleorder/depot/tools v0.0.0-00010101000000-000000000000
 	github.com/go-kit/log v0.2.1
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/storage/redis/v2 v2.0.3
@@ -33,3 +34,5 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 )
+
+replace github.com/battleorder/depot/tools => ../tools
