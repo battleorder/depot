@@ -30,12 +30,4 @@ create policy "Ranks are viewable by everyone"
 create policy "Ranks are creatable by a unit's owner"
   on units.ranks for insert
   to authenticated, anon
-  with check (
-    exists (
-      select 1 from units.units
-      where units.units.id = units.ranks.unitid
-      and units.units.ownerid = (select auth.uid())
-    )
-  );
-
-
+  with check (units.can_admin(unitid, auth.uid()));
