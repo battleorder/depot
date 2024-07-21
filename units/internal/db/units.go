@@ -21,6 +21,7 @@ func GetUnit(ctx context.Context, unitid string) (*Unit, error) {
 	rows, err := Client.From(unitsTable).
 		Select("*", "exact", false).
 		Eq("id", unitid).
+    Single().
 		ExecuteTo(&unit)
 	if err != nil {
 		return nil, err
