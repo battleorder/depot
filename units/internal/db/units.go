@@ -11,9 +11,9 @@ type Unit struct {
 	TraceableModel
 	Slug        string `json:"slug"`
 	DisplayName string `json:"displayname"`
-	Tagline     string `json:"tagline,omitempty"`
-	Description string `json:"description,omitempty"`
-	Avatar      string `json:"avatar,omitempty"`
+	Tagline     *string `json:"tagline"`
+	Description *string `json:"description"`
+	Avatar      *string `json:"avatar"`
 }
 
 func GetUnit(ctx context.Context, unitid string) (*Unit, error) {

@@ -21,12 +21,15 @@ func ListUnits(c *fiber.Ctx) error {
 
 	apiUnits := []UnitSummary{}
 	for _, unit := range units {
-		unit.Avatar = db.Client.Storage.GetPublicUrl("units_avatars", unit.Avatar, storage_go.UrlOptions{
-			Transform: &storage_go.TransformOptions{
-				Width:  64,
-				Height: 64,
-			},
-		}).SignedURL
+    if unit.Avatar != nil {
+      avatarUrl := db.Client.Storage.GetPublicUrl("units_avatars", *unit.Avatar, storage_go.UrlOptions{
+        Transform: &storage_go.TransformOptions{
+          Width:  64,
+          Height: 64,
+        },
+      }).SignedURL
+      unit.Avatar = &avatarUrl
+    }
 
     mc, err := db.GetMemberCount(c.UserContext(), unit.Id.String())
     if err != nil {
