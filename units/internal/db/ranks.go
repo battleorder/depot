@@ -1,9 +1,8 @@
 package db
 
 import (
-	"context"
-
 	"github.com/google/uuid"
+	"github.com/supabase-community/supabase-go"
 )
 
 const ranksTable = "ranks"
@@ -23,7 +22,7 @@ type createRankBody struct {
 	RankOrder   int    `json:"rankorder"`
 }
 
-func CreateRank(ctx context.Context, unitId, slug, displayName string, rankOrder int) (*Rank, error) {
+func CreateRank(client *supabase.Client, unitId, slug, displayName string, rankOrder int) (*Rank, error) {
 	body := createRankBody{
 		UnitID:      unitId,
 		Slug:        slug,
@@ -32,7 +31,7 @@ func CreateRank(ctx context.Context, unitId, slug, displayName string, rankOrder
 	}
 
 	var ranks []Rank
-	_, err := Client.From(ranksTable).Insert(&body, false, "", "representation", "exact").ExecuteTo(&ranks)
+	_, err := client.From(ranksTable).Insert(&body, false, "", "representation", "exact").ExecuteTo(&ranks)
 	if err != nil {
 		return nil, err
 	}

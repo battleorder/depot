@@ -1,9 +1,8 @@
 package db
 
 import (
-	"context"
-
 	"github.com/google/uuid"
+	"github.com/supabase-community/supabase-go"
 )
 
 const membersTable = "members"
@@ -25,7 +24,7 @@ type createMemberBody struct {
 	IsAdmin     bool   `json:"isadmin"`
 }
 
-func CreateMember(ctx context.Context, unitId, userId, rankId, displayName string, isAdmin bool) (*Member, error) {
+func CreateMember(client *supabase.Client, unitId, userId, rankId, displayName string, isAdmin bool) (*Member, error) {
 	body := createMemberBody{
 		UnitID:      unitId,
 		UserID:      userId,
@@ -35,7 +34,7 @@ func CreateMember(ctx context.Context, unitId, userId, rankId, displayName strin
 	}
 
 	var members []Member
-	_, err := Client.From(membersTable).Insert(&body, false, "", "representation", "exact").ExecuteTo(&members)
+	_, err := client.From(membersTable).Insert(&body, false, "", "representation", "exact").ExecuteTo(&members)
 	if err != nil {
 		return nil, err
 	}
@@ -43,8 +42,8 @@ func CreateMember(ctx context.Context, unitId, userId, rankId, displayName strin
 	return &members[0], nil
 }
 
-func GetMemberCount(ctx context.Context, unitId string) (int64, error) {
-	_, count, err := Client.From(membersTable).
+func GetMemberCount(client *supabase.Client, unitId string) (int64, error) {
+	_, count, err := client.From(membersTable).
 		Select("id", "exact", false).
 		Eq("unitid", unitId).
 		Execute()

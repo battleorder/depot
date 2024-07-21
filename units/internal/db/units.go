@@ -1,8 +1,9 @@
 package db
 
 import (
-	"context"
 	"log"
+
+	"github.com/supabase-community/supabase-go"
 )
 
 const unitsTable = "units"
@@ -16,9 +17,9 @@ type Unit struct {
 	Avatar      *string `json:"avatar"`
 }
 
-func GetUnit(ctx context.Context, unitid string) (*Unit, error) {
+func GetUnit(client *supabase.Client, unitid string) (*Unit, error) {
 	var unit Unit
-	rows, err := Client.From(unitsTable).
+	rows, err := client.From(unitsTable).
 		Select("*", "exact", false).
 		Eq("id", unitid).
     Single().
@@ -34,9 +35,9 @@ func GetUnit(ctx context.Context, unitid string) (*Unit, error) {
 	return &unit, nil
 }
 
-func ListUnits(ctx context.Context) ([]Unit, error) {
+func ListUnits(client *supabase.Client) ([]Unit, error) {
 	units := []Unit{}
-	_, err := Client.From(unitsTable).
+	_, err := client.From(unitsTable).
 		Select("*", "exact", false).
 		ExecuteTo(&units)
 	if err != nil {
@@ -53,7 +54,7 @@ type createUnitBody struct {
 	Tagline     string `json:"tagline,omitempty"`
 }
 
-func CreateUnit(ctx context.Context, userId, slug, displayName, description, tagline string) (*Unit, *Member, []Rank, error) {
+func CreateUnit(client *supabase.Client, userId, slug, displayName, description, tagline string) (*Unit, *Member, []Rank, error) {
 	defaultRanks := []createRankBody{
 		{Slug: "Pvt", DisplayName: "Private", RankOrder: 0},
 		{Slug: "Cpl", DisplayName: "Corporal", RankOrder: 1},
@@ -63,7 +64,7 @@ func CreateUnit(ctx context.Context, userId, slug, displayName, description, tag
 	}
 
 	var units []Unit
-	_, err := Client.From(unitsTable).Insert(&createUnitBody{
+	_, err := client.From(unitsTable).Insert(&createUnitBody{
 		Slug:        slug,
 		DisplayName: displayName,
 		Description: description,
@@ -78,7 +79,7 @@ func CreateUnit(ctx context.Context, userId, slug, displayName, description, tag
 	var endRanks []Rank
 	for _, r := range defaultRanks {
 		rank, err := CreateRank(
-			ctx,
+			client,
 			unit.Id.String(),
 			r.Slug,
 			r.DisplayName,
@@ -91,7 +92,7 @@ func CreateUnit(ctx context.Context, userId, slug, displayName, description, tag
 	}
 
 	member, err := CreateMember(
-    ctx,
+    client,
     unit.Id.String(),
     userId,
     endRanks[len(endRanks)-1].Id.String(),

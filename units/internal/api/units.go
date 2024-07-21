@@ -14,7 +14,7 @@ type UnitSummary struct {
 }
 
 func ListUnits(c *fiber.Ctx) error {
-	units, err := db.ListUnits(c.UserContext())
+	units, err := db.ListUnits(db.Client)
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func ListUnits(c *fiber.Ctx) error {
 			unit.Avatar = &avatarUrl
 		}
 
-		mc, err := db.GetMemberCount(c.UserContext(), unit.Id.String())
+		mc, err := db.GetMemberCount(db.Client, unit.Id.String())
 		if err != nil {
 			return err
 		}
@@ -61,6 +61,10 @@ type CreateUnitResponse struct {
 
 func CreateUnit(c *fiber.Ctx) error {
 	user, _ := GetAuthUser(c)
+  client, err := GetUserSupabase(c)
+  if err != nil {
+    return err
+  }
 
 	var body CreateUnitRequest
 	if err := c.BodyParser(&body); err != nil {
@@ -68,7 +72,7 @@ func CreateUnit(c *fiber.Ctx) error {
 	}
 
 	unit, member, ranks, err := db.CreateUnit(
-		c.UserContext(),
+		client,
 		user.ID.String(),
 		body.Slug,
 		body.DisplayName,
@@ -92,7 +96,7 @@ func CreateUnit(c *fiber.Ctx) error {
 func GetUnit(c *fiber.Ctx) error {
 	unitId := c.Params("unitId")
 
-	unit, err := db.GetUnit(c.UserContext(), unitId)
+	unit, err := db.GetUnit(db.Client, unitId)
 	if err != nil {
 		return err
 	}
@@ -111,7 +115,7 @@ func GetUnit(c *fiber.Ctx) error {
 		unit.Avatar = &avatarUrl
 	}
 
-	mc, err := db.GetMemberCount(c.UserContext(), unit.Id.String())
+	mc, err := db.GetMemberCount(db.Client, unit.Id.String())
 	if err != nil {
 		return err
 	}
