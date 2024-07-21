@@ -1,0 +1,11 @@
+---
+version: "0.5"
+
+processes:
+  supabase:
+    command: supabase start
+    is_daemon: true
+    shutdown:
+      command: supabase stop
+      timeout_seconds: 10
+      signal: 15

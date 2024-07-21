@@ -1,0 +1,6 @@
+# Direnv
+/.direnv/
+
+# Supabase
+/supabase/.branches
+/supabase/.temp
