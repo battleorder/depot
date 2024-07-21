@@ -5,3 +5,7 @@ processes:
   units:
     description: Units API
     command: go run ./units/main.go
+  web:
+    description: Vite development server
+    command: npm run dev
+    working_directory: web
