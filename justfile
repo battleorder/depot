@@ -14,3 +14,7 @@ get-api-tokens user='user1':
     email={{user}}@battleorder.me \
     password=user123! \
     | jq -r '{ accessToken: .access_token, refreshToken: .refresh_token }'
+
+up:
+  supabase start
+  docker compose up -d

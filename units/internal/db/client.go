@@ -1,6 +1,8 @@
 package db
 
 import (
+	"os"
+
 	"github.com/supabase-community/supabase-go"
 )
 
