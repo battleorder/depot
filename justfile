@@ -24,3 +24,6 @@ migrate: init
 up: migrate
   docker compose up -d
   process-compose up
+
+reset: init
+  supabase db reset
