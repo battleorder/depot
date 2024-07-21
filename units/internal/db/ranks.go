@@ -2,6 +2,7 @@ package db
 
 import (
 	"github.com/google/uuid"
+	"github.com/supabase-community/postgrest-go"
 	"github.com/supabase-community/supabase-go"
 )
 
@@ -20,6 +21,21 @@ type createRankBody struct {
 	Slug        string `json:"slug"`
 	DisplayName string `json:"displayname"`
 	RankOrder   int    `json:"rankorder"`
+}
+
+func GetLowestRank(client *supabase.Client, unitId string) (*Rank, error) {
+  var rank Rank
+  _, err := client.From(ranksTable).
+    Select("*", "exact", false).
+    Eq("unitid", unitId).
+    Order("rankorder", &postgrest.OrderOpts{Ascending: true}).
+    Limit(1, "").
+    Single().
+    ExecuteTo(&rank)
+  if err != nil {
+    return nil, err
+  }
+  return &rank, nil
 }
 
 func CreateRank(client *supabase.Client, unitId, slug, displayName string, rankOrder int) (*Rank, error) {

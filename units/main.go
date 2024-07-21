@@ -65,6 +65,7 @@ func main() {
 	apiv1.Get("/units", api.ListUnits)
 	apiv1.Post("/units", api.RequiresAuth, api.CreateUnit)
   apiv1.Get("/units/:unitId", api.GetUnit)
+  apiv1.Post("/units/:unitId/members", api.RequiresAuth, api.JoinUnit)
 
 	level.Error(logger).Log("msg", "server crashed", "err", app.Listen(":4000"))
 }

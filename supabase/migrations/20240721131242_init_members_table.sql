@@ -30,13 +30,14 @@ create policy "Members are viewable by everyone"
 create policy "Members are creatable only by authenticated users"
   on units.members for insert
   to authenticated
+  with check (true and units.members.isadmin = false);
+
+create policy "Admin members are creatable only by authenticated users"
+  on units.members for insert, update
+  to authenticated
   with check (
-    exists (
-      select 1 from units.units
-      where
-        units.units.id = units.members.unitid
-        and units.units.ownerid = (select auth.uid())
-    )
+    (select units.can_admin(units.members.unitid, auth.uid()))
+    and units.members.isadmin = true
   );
 
 create view units.member_names

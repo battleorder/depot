@@ -127,3 +127,31 @@ func GetUnit(c *fiber.Ctx) error {
 
 	return c.JSON(us)
 }
+
+func JoinUnit(c *fiber.Ctx) error {
+  unitId := c.Params("unitId")
+  client, err := GetUserSupabase(c)
+  if err != nil {
+    return err
+  }
+  user, _ := GetAuthUser(c)
+
+  rank, err := db.GetLowestRank(client, unitId)
+  if err != nil {
+    return err
+  }
+
+  member, err := db.CreateMember(
+    client,
+    unitId,
+    user.ID.String(),
+    rank.Id.String(),
+    "",
+    false,
+  )
+  if err != nil {
+    return err
+  }
+
+  return c.JSON(member)
+}
