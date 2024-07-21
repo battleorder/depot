@@ -1,39 +1,59 @@
 package main
 
 import (
+	"time"
+
 	"github.com/battleorder/depot/tools/log"
 	"github.com/battleorder/depot/units/internal/api"
 	"github.com/battleorder/depot/units/internal/db"
 	"github.com/go-kit/log/level"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/google/uuid"
 )
 
 func main() {
-  logger := log.NewLogger()
+	logger := log.NewLogger()
 
-  if err := db.Init(); err != nil {
-    level.Error(logger).Log("msg", "failed to initialize supabase client", "err", err)
-    panic(err)
-  }
+	if err := db.Init(); err != nil {
+		level.Error(logger).Log("msg", "failed to initialize supabase client", "err", err)
+		panic(err)
+	}
 
-  app := fiber.New()
-  app.Use(log.Fiber(logger))
+	app := fiber.New()
+  
+  app.Use(helmet.New())
 
-  app.Use(cors.New(cors.Config{
-    AllowOrigins: "http://localhost:5173",
-    AllowCredentials: true,
-    AllowHeaders: "Authorization",
+  app.Use(requestid.New(requestid.Config{
+    Header: "X-Request-ID",
+    Generator: func() string {
+      return uuid.NewString()
+    },
   }))
 
-  app.Use(limiter.New(limiter.Config{
-    Storage: db.Storage,
-  }))
+	app.Use(log.Fiber(logger))
 
-  apiv1 := app.Group("/v1", api.Authenticatable)
-  apiv1.Get("/units", api.ListUnits)
-  apiv1.Post("/units", api.RequiresAuth, api.CreateUnit)
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost:5173",
+		AllowCredentials: true,
+		AllowHeaders:     "Authorization",
+	}))
 
-  level.Error(logger).Log("msg", "server crashed", "err", app.Listen(":4000"))
+	app.Use(limiter.New(limiter.Config{
+		Max:        20,
+		Expiration: 30 * time.Second,
+		Storage:    db.Storage,
+	}))
+
+  app.Use(recover.New())
+
+	apiv1 := app.Group("/v1", api.Authenticatable)
+	apiv1.Get("/units", api.ListUnits)
+	apiv1.Post("/units", api.RequiresAuth, api.CreateUnit)
+
+	level.Error(logger).Log("msg", "server crashed", "err", app.Listen(":4000"))
 }
