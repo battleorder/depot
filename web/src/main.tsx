@@ -4,6 +4,7 @@ import './index.css'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 
 import { routeTree } from './routeTree.gen';
+import { ThemeProvider } from './components/theme-provider';
 
 const router = createRouter({ routeTree });
 
@@ -17,7 +18,9 @@ const rootElement = document.getElementById('root')!;
 if (!rootElement.innerHTML) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </React.StrictMode>,
   )
 }

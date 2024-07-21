@@ -1,4 +1,6 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import React from 'react'
+import { Shell } from '@/components/shell'
+import { createRootRoute, Outlet } from '@tanstack/react-router'
 
 const RouterDevtools =
   process.env.NODE_ENV === 'production'
@@ -14,18 +16,9 @@ const RouterDevtools =
 
 export const Route = createRootRoute({
   component: () => (
-    <>
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>{' '}
-        <Link to="/" className="[&.active]:font-bold">
-          About
-        </Link>
-      </div>
-      <hr />
+    <Shell>
       <Outlet />
       <RouterDevtools />
-    </>
+    </Shell>
   ),
 })
