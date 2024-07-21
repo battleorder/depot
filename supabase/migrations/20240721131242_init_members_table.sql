@@ -9,9 +9,9 @@ create table units.members (
   displayname varchar(64),
 
   -- metadata
-  isadmin   bool        default false,
-  createdat timestamptz default now(),
-  updatedat timestamptz default now(),
+  isadmin   bool        not null default false,
+  createdat timestamptz not null default now(),
+  updatedat timestamptz not null default now(),
 
   -- constraints
   unique(unitid, userid),

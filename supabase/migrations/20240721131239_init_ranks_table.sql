@@ -12,8 +12,8 @@ create table units.ranks (
   avatar    text,
 
   -- metadata
-  createdat timestamptz default now(),
-  updatedat timestamptz default now(),
+  createdat timestamptz not null default now(),
+  updatedat timestamptz not null default now(),
 
   -- constraints
   unique(unitid, slug),

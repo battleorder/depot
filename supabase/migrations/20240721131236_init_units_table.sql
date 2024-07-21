@@ -11,11 +11,10 @@ create table units.units (
   description text,
   avatar      text,
 
-  ownerid uuid not null,
-
   -- metadata
-  createdat timestamptz default now(),
-  updatedat timestamptz default now(),
+  ownerid uuid not null,
+  createdat timestamptz not null default now(),
+  updatedat timestamptz not null default now(),
 
   -- constraints
   foreign key(ownerid) references auth.users(id)
