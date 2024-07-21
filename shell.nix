@@ -1,8 +1,8 @@
 { mkShell
+, config
 
 # Languages
 , nodejs
-, go
 
 # Scripting
 , just
@@ -16,7 +16,6 @@
 }:
 mkShell {
   buildInputs = [
-    go
     golangci-lint
     httpie
     just
@@ -24,5 +23,9 @@ mkShell {
     nodejs
     process-compose
     supabase-cli
+  ];
+
+  inputsFrom = [
+    config.packages.units
   ];
 }
