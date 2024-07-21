@@ -6,8 +6,8 @@ import (
 
 var (
 	Client    *supabase.Client
-	ApiUrl    = "http://127.0.0.1:54321"
-	AnonToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
+	ApiUrl    = os.Getenv("SUPABASE_API_URL")
+	AnonToken = os.Getenv("SUPABASE_ANON_TOKEN")
 )
 
 func Init() error {
