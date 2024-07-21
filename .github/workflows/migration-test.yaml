@@ -1,0 +1,19 @@
+---
+name: 'Migration Test'
+on:
+  push:
+    branches:
+      - main
+    tags: ['*']
+  pull_request:
+
+jobs:
+  migration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase db start
+      - run: supabase db reset
