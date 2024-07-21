@@ -8,4 +8,4 @@ processes:
   web:
     description: Vite development server
     command: npm run dev
-    working_directory: web
+    working_dir: web
