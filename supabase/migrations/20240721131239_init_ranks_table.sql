@@ -18,7 +18,7 @@ create table units.ranks (
   -- constraints
   unique(unitid, slug),
   unique(unitid, displayname),
-  foreign key (unitid) references units.units(id)
+  foreign key (unitid) references units.units(id) on delete cascade
 );
 alter table units.ranks enable row level security;
 

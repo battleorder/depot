@@ -15,9 +15,9 @@ create table units.members (
 
   -- constraints
   unique(unitid, userid),
-  foreign key (unitid) references units.units(id),
+  foreign key (unitid) references units.units(id) on delete cascade,
   foreign key (rankid) references units.ranks(id),
-  foreign key (userid) references auth.users(id)
+  foreign key (userid) references auth.users(id) on delete cascade
 );
 
 alter table units.members enable row level security;
@@ -27,17 +27,25 @@ create policy "Members are viewable by everyone"
   to authenticated, anon
   using ( true );
 
-create policy "Members are creatable only by authenticated users"
+create policy "Admin members are creatable only by authenticated users"
   on units.members for insert
   to authenticated
-  with check (true and units.members.isadmin = false);
-
-create policy "Admin members are creatable only by authenticated users"
-  on units.members for insert, update
-  to authenticated
   with check (
-    (select units.can_admin(units.members.unitid, auth.uid()))
-    and units.members.isadmin = true
+    (
+      (select units.can_admin(units.members.unitid, auth.uid()))
+      and units.members.isadmin = true
+    ) or units.members.isadmin = false
+  );
+
+create policy "Admin members are escalated only by other admin members"
+  on units.members for update
+  to authenticated
+  using (true)
+  with check (
+    (
+      (select units.can_admin(units.members.unitid, auth.uid()))
+      and units.members.isadmin = true
+    ) or units.members.isadmin = false
   );
 
 create view units.member_names
