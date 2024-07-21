@@ -1,5 +1,4 @@
 import React from 'react'
-import { Shell } from '@/components/shell'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 
 const RouterDevtools =
@@ -16,9 +15,9 @@ const RouterDevtools =
 
 export const Route = createRootRoute({
   component: () => (
-    <Shell>
+    <>
       <Outlet />
       <RouterDevtools />
-    </Shell>
+    </>
   ),
 })

@@ -9,7 +9,7 @@ import (
 var (
 	Client    *supabase.Client
 	ApiUrl    = os.Getenv("SUPABASE_API_URL")
-	AnonToken = os.Getenv("SUPABASE_ANON_TOKEN")
+	AnonToken = os.Getenv("SUPABASE_ANON_KEY")
 )
 
 func Init() error {
