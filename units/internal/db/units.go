@@ -10,8 +10,8 @@ const unitsTable = "units"
 
 type Unit struct {
 	TraceableModel
-	Slug        string `json:"slug"`
-	DisplayName string `json:"displayname"`
+	Slug        string  `json:"slug"`
+	DisplayName string  `json:"displayname"`
 	Tagline     *string `json:"tagline"`
 	Description *string `json:"description"`
 	Avatar      *string `json:"avatar"`
@@ -22,7 +22,7 @@ func GetUnit(client *supabase.Client, unitid string) (*Unit, error) {
 	rows, err := client.From(unitsTable).
 		Select("*", "exact", false).
 		Eq("id", unitid).
-    Single().
+		Single().
 		ExecuteTo(&unit)
 	if err != nil {
 		return nil, err
@@ -52,6 +52,7 @@ type createUnitBody struct {
 	DisplayName string `json:"displayname"`
 	Description string `json:"description,omitempty"`
 	Tagline     string `json:"tagline,omitempty"`
+	OwnerId     string `json:"ownerid"`
 }
 
 func CreateUnit(client *supabase.Client, userId, slug, displayName, description, tagline string) (*Unit, *Member, []Rank, error) {
@@ -69,6 +70,7 @@ func CreateUnit(client *supabase.Client, userId, slug, displayName, description,
 		DisplayName: displayName,
 		Description: description,
 		Tagline:     tagline,
+		OwnerId:     userId,
 	}, false, "", "representation", "exact").ExecuteTo(&units)
 	if err != nil {
 		log.Printf("Failed to insert unit: %v", err)
@@ -86,22 +88,22 @@ func CreateUnit(client *supabase.Client, userId, slug, displayName, description,
 			r.RankOrder,
 		)
 		if err != nil {
-      return nil, nil, []Rank{}, err
+			return nil, nil, []Rank{}, err
 		}
 		endRanks = append(endRanks, *rank)
 	}
 
 	member, err := CreateMember(
-    client,
-    unit.Id.String(),
-    userId,
-    endRanks[len(endRanks)-1].Id.String(),
-    "",
-    true,
-  )
-  if err != nil {
-    return nil, nil, []Rank{}, err
-  }
+		client,
+		unit.Id.String(),
+		userId,
+		endRanks[len(endRanks)-1].Id.String(),
+		"",
+		true,
+	)
+	if err != nil {
+		return nil, nil, []Rank{}, err
+	}
 
 	return unit, member, endRanks, nil
 }

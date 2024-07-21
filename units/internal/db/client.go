@@ -11,7 +11,7 @@ var (
 )
 
 func Init() error {
-	c, err := NewClient()
+  c, err := NewClient()
 	if err != nil {
 		return err
 	}

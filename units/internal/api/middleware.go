@@ -46,7 +46,7 @@ func GetAuthClient(c *fiber.Ctx) (gotrue.Client, bool) {
 
 func GetUserSupabase(c *fiber.Ctx) (*supabase.Client, error) {
 	accessToken, ok := c.Locals("sb-auth-token").(string)
-	if !ok {
+	if !ok || accessToken == "" {
 		return nil, nil
 	}
 
@@ -54,12 +54,11 @@ func GetUserSupabase(c *fiber.Ctx) (*supabase.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-
   client.UpdateAuthSession(types.Session{
     AccessToken: accessToken,
   })
 
-	return client, nil
+  return client, nil
 }
 
 func GetAuthUser(c *fiber.Ctx) (*types.UserResponse, bool) {
