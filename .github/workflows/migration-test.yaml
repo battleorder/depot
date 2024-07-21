@@ -5,7 +5,11 @@ on:
     branches:
       - main
     tags: ['*']
+    paths:
+      - supabase/**/*
   pull_request:
+    paths:
+      - supabase/**/*
 
 jobs:
   migration-test:
