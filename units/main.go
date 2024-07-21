@@ -9,6 +9,7 @@ import (
 	"github.com/go-kit/log/level"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -24,9 +25,18 @@ func main() {
 		panic(err)
 	}
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+    ErrorHandler: func(c *fiber.Ctx, err error) error {
+      level.Error(logger).Log("msg", "request failed", "err", err)
+      if err, ok := err.(*fiber.Error); ok {
+        return c.Status(err.Code).SendString(err.Message)
+      }
+      return err
+    },
+  })
   
   app.Use(helmet.New())
+  app.Use(etag.New())
 
   app.Use(requestid.New(requestid.Config{
     Header: "X-Request-ID",
