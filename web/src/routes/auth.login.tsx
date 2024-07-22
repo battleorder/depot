@@ -2,11 +2,12 @@ import { AuthShell } from '@/components/auth-shell'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { authStore } from '@/lib/auth'
 import { supabase } from '@/lib/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AuthApiError, SignInWithPasswordCredentials } from '@supabase/supabase-js'
-import { useMutation } from '@tanstack/react-query'
-import { createLazyFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -15,9 +16,17 @@ const loginFormSchema = z.object({
   password: z.string(),
 });
 
-export const Route = createLazyFileRoute('/auth/login')({
+export const Route = createFileRoute('/auth/login')({
+  beforeLoad: () => {
+    if (authStore.state.isAuthenticated) {
+      throw redirect({
+        to: '/',
+      });
+    }
+  },
   component: () => {
     const router = useRouter();
+    const client = useQueryClient();
 
     const form = useForm<z.infer<typeof loginFormSchema>>({
       resolver: zodResolver(loginFormSchema),
@@ -41,6 +50,7 @@ export const Route = createLazyFileRoute('/auth/login')({
         }
       },
       onSuccess: () => {
+        client.invalidateQueries({ queryKey: ['auth.user'] });
         router.navigate({ to: '/' });
       }
     });

@@ -1,9 +1,8 @@
 import { Link, LinkComponent } from "@tanstack/react-router";
-import { CircleUser, Home, Menu, SwordsIcon } from "lucide-react";
+import { Home, Menu, SwordsIcon } from "lucide-react";
 import { PropsWithChildren } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { ModeToggle } from "./mode-toggle";
 import { AuthMenu } from "./auth-menu";
 

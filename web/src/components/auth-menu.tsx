@@ -1,14 +1,16 @@
 import { CircleUser } from "lucide-react";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/client";
 import { Link } from "@tanstack/react-router";
+import { authStore, updateAuth, useAuth } from "@/lib/auth";
+import { useStore } from "@tanstack/react-store";
 
 const AnonMenu = () => (
   <>
     <DropdownMenuItem asChild>
-      <Link href="/auth/login">Log in</Link>
+      <Link to="/auth/login">Log in</Link>
     </DropdownMenuItem>
     <DropdownMenuItem>Sign up</DropdownMenuItem>
     <DropdownMenuItem>Support</DropdownMenuItem>
@@ -16,10 +18,9 @@ const AnonMenu = () => (
 );
 
 const AuthedMenu = () => {
-  const client = useQueryClient();
   const { mutate: logout } = useMutation({
     mutationFn: () => supabase.auth.signOut({ scope: "local" }),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['auth.user'] }),
+    onSuccess: () => updateAuth(),
   });
 
   return (
@@ -36,16 +37,7 @@ const AuthedMenu = () => {
 };
 
 export const AuthMenu = () => {
-  const { isLoading, data: user } = useQuery({
-    queryKey: ['auth.user'],
-    queryFn: async () => {
-      const sess = await supabase.auth.getSession();
-      if (sess.error) throw sess.error;
-      const { data, error } = await supabase.auth.getUser();
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { isAuthenticated } = useStore(authStore);
 
   return (
     <DropdownMenu>
@@ -56,8 +48,7 @@ export const AuthMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {isLoading && 'Loading...'}
-        {!isLoading && (user ? <AuthedMenu /> : <AnonMenu />)}
+        {isAuthenticated ? <AuthedMenu /> : <AnonMenu />}
       </DropdownMenuContent>
     </DropdownMenu>
   );
