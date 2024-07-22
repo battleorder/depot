@@ -2,7 +2,7 @@ set search_path = units, public, extensions;
 
 create table units.members (
   -- ident
-  id          uuid       primary key default uuid_generate_v4(),
+  id          uuid       primary key default uuid6(),
   unitid      uuid       not null,
   userid      uuid       not null,
   rankid      uuid       not null,

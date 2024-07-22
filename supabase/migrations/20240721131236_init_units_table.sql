@@ -2,7 +2,7 @@ set search_path = units, public, extensions;
 
 create table units.units (
   -- ident
-  id          uuid        primary key default uuid_generate_v4(),
+  id          uuid        primary key default uuid6(),
   slug        varchar(32) unique not null,
   displayname varchar(64) unique not null,
 
