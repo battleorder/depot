@@ -14,13 +14,26 @@ type UnitSummary struct {
 }
 
 func ListUnits(c *fiber.Ctx) error {
-	units, err := db.ListUnits(db.Client)
+  perPage := c.QueryInt("per_page", 10)
+  token := c.Query("token")
+
+  tokenQ := []string{}
+  if token != "" {
+    tokenQ = append(tokenQ, token)
+  }
+
+	units, err := db.ListUnits(db.Client, perPage, tokenQ...)
 	if err != nil {
 		return err
 	}
 
-	apiUnits := []UnitSummary{}
-	for _, unit := range units {
+  p := db.Paginated[UnitSummary]{
+    Data: []UnitSummary{},
+    NextToken: units.NextToken,
+    PerPage: units.PerPage,
+  }
+
+	for _, unit := range units.Data {
 		if unit.Avatar != nil {
 			avatarUrl := db.Client.Storage.GetPublicUrl("units_avatars", *unit.Avatar, storage_go.UrlOptions{
 				Transform: &storage_go.TransformOptions{
@@ -40,10 +53,10 @@ func ListUnits(c *fiber.Ctx) error {
 			Unit:        unit,
 			MemberCount: mc,
 		}
-		apiUnits = append(apiUnits, us)
+		p.Data = append(p.Data, us)
 	}
 
-	return c.JSON(apiUnits)
+	return c.JSON(p)
 }
 
 type CreateUnitRequest struct {

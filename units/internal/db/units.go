@@ -35,16 +35,31 @@ func GetUnit(client *supabase.Client, unitid string) (*Unit, error) {
 	return &unit, nil
 }
 
-func ListUnits(client *supabase.Client) ([]Unit, error) {
+func ListUnits(client *supabase.Client, perPage int, nextToken ...string) (Paginated[Unit], error) {
 	units := []Unit{}
-	_, err := client.From(unitsTable).
-		Select("*", "exact", false).
-		ExecuteTo(&units)
+
+  p := Paginated[Unit]{
+    Data: units,
+    PerPage: perPage,
+  }
+
+	_, err := Paginate(
+    client.From(unitsTable).Select("*", "exact", false),
+    "id",
+    perPage,
+    nextToken...,
+  ).ExecuteTo(&units)
 	if err != nil {
-		return nil, err
+		return p, err
 	}
 
-	return units, nil
+  p.Data = units
+  if len(units) > 0 {
+    next := units[len(units)-1].Id.String()
+    p.NextToken = &next
+  }
+
+	return p, nil
 }
 
 type createUnitBody struct {
