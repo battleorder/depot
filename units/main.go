@@ -58,6 +58,7 @@ func run(ctx context.Context, w io.Writer, getenv func(string) string, args []st
   go func() {
     defer wg.Done()
     <-ctx.Done()
+    //nolint:ineffassign,staticcheck
     shutdownCtx := context.Background()
     shutdownCtx, cancel := context.WithTimeout(ctx, 10 * time.Second)
     defer cancel()

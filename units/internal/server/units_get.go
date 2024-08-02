@@ -82,6 +82,6 @@ func handleGetUnits(lgr log.Logger) http.Handler {
 			res.Data = append(res.Data, ri)
 		}
 
-		encode(w, http.StatusOK, res)
+		_ = encode(w, http.StatusOK, res)
 	})
 }
