@@ -24,18 +24,18 @@ type createRankBody struct {
 }
 
 func GetLowestRank(client *supabase.Client, unitId string) (*Rank, error) {
-  var rank Rank
-  _, err := client.From(ranksTable).
-    Select("*", "exact", false).
-    Eq("unitid", unitId).
-    Order("rankorder", &postgrest.OrderOpts{Ascending: true}).
-    Limit(1, "").
-    Single().
-    ExecuteTo(&rank)
-  if err != nil {
-    return nil, err
-  }
-  return &rank, nil
+	var rank Rank
+	_, err := client.From(ranksTable).
+		Select("*", "exact", false).
+		Eq("unitid", unitId).
+		Order("rankorder", &postgrest.OrderOpts{Ascending: true}).
+		Limit(1, "").
+		Single().
+		ExecuteTo(&rank)
+	if err != nil {
+		return nil, err
+	}
+	return &rank, nil
 }
 
 func CreateRank(client *supabase.Client, unitId, slug, displayName string, rankOrder int) (*Rank, error) {

@@ -1,13 +1,16 @@
 package log
 
 import (
-	"os"
+	"io"
 
 	gokit_log "github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 )
 
-func NewLogger() gokit_log.Logger {
-  l := gokit_log.NewLogfmtLogger(os.Stderr)
-  l = gokit_log.WithPrefix(l, "ts", gokit_log.DefaultTimestamp)
-  return l
+func NewLogger(w io.Writer) gokit_log.Logger {
+  lgr := gokit_log.NewLogfmtLogger(w)
+  lgr = gokit_log.WithPrefix(lgr, "ts", gokit_log.DefaultTimestamp)
+  lgr = level.NewFilter(lgr, level.AllowAll())
+  lgr = gokit_log.WithPrefix(lgr, "module", gokit_log.DefaultCaller)
+  return lgr
 }

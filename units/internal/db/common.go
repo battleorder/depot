@@ -14,9 +14,9 @@ type TraceableModel struct {
 }
 
 type Paginated[T any] struct {
-	Data      []T    `json:"data"`
+	Data      []T     `json:"data"`
 	NextToken *string `json:"next_token"`
-	PerPage   int    `json:"per_page"`
+	PerPage   int     `json:"per_page"`
 }
 
 func Paginate(qb *postgrest.FilterBuilder, field string, perPage int, token ...string) *postgrest.FilterBuilder {

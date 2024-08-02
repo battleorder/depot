@@ -1,31 +1,33 @@
 package db
 
 import (
-	"os"
-
 	"github.com/supabase-community/supabase-go"
 )
 
 var (
-	Client    *supabase.Client
-	ApiUrl    = os.Getenv("SUPABASE_API_URL")
-	AnonToken = os.Getenv("SUPABASE_ANON_KEY")
+	ApiUrl    string
+	AnonToken string
 )
 
-func Init() error {
-  c, err := NewClient()
+func NewSupabase(
+  apiUrl string,
+  anonToken string,
+) (*supabase.Client, error) {
+	ApiUrl = apiUrl
+	AnonToken = anonToken
+
+	c, err := NewClient()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	Client = c
 
 	initRedis()
 
-	return nil
+	return c, nil
 }
 
 func NewClient() (*supabase.Client, error) {
-  return supabase.NewClient(ApiUrl, AnonToken, &supabase.ClientOptions{
+	return supabase.NewClient(ApiUrl, AnonToken, &supabase.ClientOptions{
 		Schema: "units",
 	})
 }
