@@ -20,6 +20,7 @@ on:
       - go.work
       - go.work.sum
       - justfile
+  workflow_dispatch:
 
 jobs:
   lint:
