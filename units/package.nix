@@ -2,8 +2,10 @@
 buildGoModule {
   name = "battleorder-units";
   version = "v0.0.1";
-  src = ./.;
+  src = ../.;
   ldflags = [ "-s" "-w" ];
-  vendorHash = "sha256-UCYYgHVw30sB2Hx3hR7Et+vVsHgJ4USFZAuovUuF5mU=";
+  vendorHash = "sha256-zgZgFbFLRuYLYUAaXUbD8iZj39oPoC2Erxl5nEYnsVw=";
   CGO_ENABLED = false;
+  env.GOWORK = "off";
+  modRoot = "./units";
 }
