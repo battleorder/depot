@@ -11,8 +11,6 @@ import (
 )
 
 func handleGetUnits(lgr log.Logger) http.Handler {
-	type request struct{}
-
 	type responseItem struct {
 		db.Unit
 		MemberCount int64 `json:"membercount"`
