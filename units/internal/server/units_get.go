@@ -1,16 +1,15 @@
 package server
 
 import (
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/battleorder/depot/units/internal/db"
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	storage_go "github.com/supabase-community/storage-go"
 )
 
-func handleGetUnits(lgr log.Logger) http.Handler {
+func handleGetUnits() http.Handler {
 	type responseItem struct {
 		db.Unit
 		MemberCount int64 `json:"membercount"`
@@ -21,7 +20,7 @@ func handleGetUnits(lgr log.Logger) http.Handler {
 		client, err := GetSupabaseClient(r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			level.Error(lgr).Log("msg", "failed to supabase client for user", "err", err)
+      slog.Error("failed to supabase client for user", "err", err)
 			return
 		}
 
@@ -32,7 +31,7 @@ func handleGetUnits(lgr log.Logger) http.Handler {
       if err != nil {
         w.WriteHeader(http.StatusBadRequest)
         w.Write([]byte("Invalid per_page value."))
-        level.Debug(lgr).Log("msg", "failed to get per_page", "err", err)
+        slog.Error("failed to get per_page", "err", err)
         return
       }
     }
@@ -46,7 +45,7 @@ func handleGetUnits(lgr log.Logger) http.Handler {
 		u, err := db.ListUnits(client, int(perPage), tokenQ...)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			level.Error(lgr).Log("msg", "failed to get units", "err", err)
+      slog.Error("failed to get units", "err", err)
 			return
 		}
 
@@ -69,7 +68,7 @@ func handleGetUnits(lgr log.Logger) http.Handler {
 			mc, err := db.GetMemberCount(client, unit.Id.String())
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				level.Error(lgr).Log("msg", "failed to get unit member count", "err", err)
+        slog.Error("failed to get member count", "err", err)
 				return
 			}
 

@@ -1,11 +1,7 @@
 package server
 
-import (
-	"net/http"
+import "net/http"
 
-	"github.com/go-kit/log"
-)
-
-func addRoutes(mux *http.ServeMux, lgr log.Logger) {
-  mux.Handle("GET /v1/units", handleGetUnits(lgr))
+func addRoutes(mux *http.ServeMux) {
+	mux.Handle("GET /v1/units", handleGetUnits())
 }

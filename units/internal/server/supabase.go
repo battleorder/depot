@@ -2,12 +2,11 @@ package server
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/battleorder/depot/units/internal/db"
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/supabase-community/gotrue-go"
 	"github.com/supabase-community/gotrue-go/types"
 	"github.com/supabase-community/supabase-go"
@@ -22,7 +21,7 @@ const (
 	authUserKey           RequestKey = iota + 3
 )
 
-func newAuthenticatedMiddleware(lgr log.Logger, spb *supabase.Client, h http.Handler) http.Handler {
+func newAuthenticatedMiddleware(spb *supabase.Client, h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -41,7 +40,7 @@ func newAuthenticatedMiddleware(lgr log.Logger, spb *supabase.Client, h http.Han
 			if err != nil {
 				w.WriteHeader(http.StatusUnauthorized)
 				if !strings.Contains(err.Error(), "token is expired by") {
-					level.Error(lgr).Log("msg", "failed to retrieve user", "err", err)
+          slog.Error("failed to retrieve user", "err", err)
 				}
 				return
 			}
